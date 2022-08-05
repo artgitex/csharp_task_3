@@ -1,27 +1,34 @@
-﻿using AuthenticationServer.Models;
+﻿using AuthenticationServer.DbContexts;
+using AuthenticationServer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthenticationServer.Services.UserRepository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users = new List<User>();
+        private readonly AuthDbContext _context;
 
-        public User Create(User user)
+        public UserRepository(AuthDbContext context)
         {
-            user.Id = Guid.NewGuid();
-            _users.Add(user);
+            _context = context;
+        }
+
+        public async Task<User> Create(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChangesAsync();
 
             return user;
         }
 
-        public User GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
-            return _users.FirstOrDefault(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public User GetByUserName(string username)
+        public async Task<User> GetByUserName(string username)
         {
-            return _users.FirstOrDefault(u => u.Username == username);
-        }
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);            
+        }       
     }
 }

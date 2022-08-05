@@ -2,7 +2,9 @@
 using AuthenticationServer.Models.Requests;
 using AuthenticationServer.Services;
 using AuthenticationServer.Services.UserRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AuthenticationServer.Controllers;
 
@@ -20,7 +22,7 @@ public class AuthController : Controller
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterRequest registerRequest)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
 
         if (registerRequest.Password != registerRequest.ConfirmPassword)
@@ -28,13 +30,13 @@ public class AuthController : Controller
             return BadRequest();
         }
 
-        User existingUserByEmail = _userRepository.GetByEmail(registerRequest.Email);
+        User existingUserByEmail = await _userRepository.GetByEmail(registerRequest.Email);
         if (existingUserByEmail != null)
         {
             return Conflict();
         }
 
-        User existingUserByUsername = _userRepository.GetByUserName(registerRequest.Username);
+        User existingUserByUsername = await _userRepository.GetByUserName(registerRequest.Username);
         if (existingUserByUsername != null)
         {
             return Conflict();
@@ -55,10 +57,10 @@ public class AuthController : Controller
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest loginRequest)
-    {       
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+    {
 
-        User user = _userRepository.GetByUserName(loginRequest.Username);
+        User user = await _userRepository.GetByUserName(loginRequest.Username);
         if (user == null)
         {
             return Unauthorized();
@@ -74,4 +76,11 @@ public class AuthController : Controller
 
         return Ok(accessToken);
     }
+        
+    [Authorize]
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {              
+        return NoContent();
+    }    
 }
