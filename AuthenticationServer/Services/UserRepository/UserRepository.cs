@@ -6,22 +6,22 @@ namespace AuthenticationServer.Services.UserRepository
     {
         private readonly List<User> _users = new List<User>();
 
-        public Task<User> Create(User user)
+        public User Create(User user)
         {
             user.Id = Guid.NewGuid();
             _users.Add(user);
 
-            return Task.FromResult(user);
+            return user;
         }
 
-        public Task<User> GetByEmail(string email)
+        public User GetByEmail(string email)
         {
-            return Task.FromResult(_users.FirstOrDefault(u => u.Email == email));
+            return _users.FirstOrDefault(u => u.Email == email);
         }
 
-        public Task<User> GetByUserName(string username)
+        public User GetByUserName(string username)
         {
-            return Task.FromResult(_users.FirstOrDefault(u => u.Username == username));
+            return _users.FirstOrDefault(u => u.Username == username);
         }
     }
 }

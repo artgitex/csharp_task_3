@@ -18,24 +18,24 @@ public class AuthController : Controller
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
+    public IActionResult Register([FromBody] RegisterRequest registerRequest)
     {
-        
+
         if (registerRequest.Password != registerRequest.ConfirmPassword)
         {
-            return BadRequest();            
+            return BadRequest();
         }
 
-        User existingUserByEmail = await _userRepository.GetByEmail(registerRequest.Email);
+        User existingUserByEmail = _userRepository.GetByEmail(registerRequest.Email);
         if (existingUserByEmail != null)
         {
-            return Conflict();            
+            return Conflict();
         }
 
-        User existingUserByUsername = await _userRepository.GetByUserName(registerRequest.Username);
+        User existingUserByUsername = _userRepository.GetByUserName(registerRequest.Username);
         if (existingUserByUsername != null)
         {
-            return Conflict();            
+            return Conflict();
         }
 
         string passwordHash = _passwordHasher.HashPassword(registerRequest.Password);
