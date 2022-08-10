@@ -1,0 +1,44 @@
+﻿@using ToDoApp.Models
+@model ToDoItem
+
+<form id="create-form" method="post" asp-page="Index" asp-route-id="@Model.Id" asp-page-handler="CreateOrEdit" onsubmit="return jQueryModalPost(this);">
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Task</label>
+        <div class="col-md-9">
+            <input type="text" autocomplete="off" asp-for="Task" name="Task" class="form-control">
+            <span asp-validation-for="Task" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">End Date</label>
+        <div class="col-md-9">
+            <input type="text" autocomplete="off" asp-for="EndDate" name="EndDate" class="form-control">
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Status</label>
+        <div class="col-md-9">
+            <input type="text" autocomplete="off" asp-for="Status" name="Status" class="form-control">
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Assignee</label>
+        <div class="col-md-9">
+            <input type="text" autocomplete="off" asp-for="Assignee" name="Assignee" class="form-control" />
+            <span asp-validation-for="Assignee" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+        </div>
+    </div>
+    <div class="form-group justify-content-between">
+        <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary save-button">Save</button>
+    </div>
+</form>
+<script type="text/javascript" language=javascript>
+    $.validator.unobtrusive.parse(document);
+</script>

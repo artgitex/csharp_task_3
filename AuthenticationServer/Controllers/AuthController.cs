@@ -75,12 +75,6 @@ public class AuthController : Controller
         string accessToken = _tokenGenerator.GenerateToken(user);
 
         return Ok(accessToken);
-    }
-        
-    [Authorize]
-    [HttpPost("logout")]
-    public IActionResult Logout()
-    {              
-        return NoContent();
-    }    
+    }        
+    
 }
