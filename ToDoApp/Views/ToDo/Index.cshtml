@@ -1,0 +1,105 @@
+﻿@model ToDoApp.Models.ToDoItem
+
+@{
+    ViewData["Title"] = "Index";
+}
+<link href="~/lib/datatables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<h1>Task Board</h1>
+</br>
+
+<p><a class="btn btn-success" asp-action="AddOrEdit">New Task</a></p>
+
+@if (TempData["AlertMessage"] != null)
+{
+    <div id="notify" class="alert alert-success" style="display:block">
+        <strong>Success!</strong> @TempData["AlertMessage"]
+    </div>
+    <script>
+        setTimeout(() => notify.style.display = "none", 5000)
+    </script>
+}
+
+<table class="table" id="todoDataTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Task</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Assignee</th>
+            <th>Photo</th>
+            <th></th>
+        </tr>
+    </thead>    
+</table>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.min.js"></script>    
+
+    <script>
+        var Popup, dataTable;
+        $(document).ready(function() {
+            dataTable = $("#todoDataTable").DataTable({  
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "/ToDo/GetData",
+                    "type": "POST",
+                    "datatype": "json"                    
+                }, 
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }],
+                "columns": [
+                    { "data": "id", "name": "Id" },
+                    { "data": "task", "name": "Task" },
+                    { "data": "endDate", "name": "EndDate", "width":"150px" },
+                    { "data": "status", "name": "Status", "width":"150px"  },
+                    { "data": "assignee", "name": "Assignee", "width":"200px"  },
+                    { "data": "photo" ,
+                      "render": function ( data) {
+                          if (data) {
+                              return '<img src="data:image/jpg;base64,' + data + '" width="50px" height="50px">';
+                          } else {
+                              return null;
+                          }
+                      },
+                      "orderable": false,
+                      "searchable":false,
+                      "width":"150px"
+                    },
+                    { "data": "id", "render" : function (data) {                             
+                        return "<a class='btn btn-primary btn-sm' onclick=location.href='@(Url.Action("AddOrEdit", "ToDo"))/" +data+ "'><i class='fa fa-pencil'></i>Edit</a><a class='btn btn-danger btn-sm' style='margin-left:5px' onclick=Delete("+data+")><i class='fa fa-trash'></i> Delete</a>";
+                    },
+                        "orderable": false,
+                        "searchable":false,
+                        "width":"150px"
+                    }
+                ],
+            })            
+        });                
+        
+        function Delete(id) {
+            if(confirm('Are You Sure to Delete this Task?'))
+            {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete","ToDo")/' + id,
+                    success: function (data) {
+                        if (data.success)
+                        {                            
+                            dataTable.ajax.reload();
+                        }
+                    }
+                });
+            }
+        }   
+
+    </script>
+}

@@ -1,0 +1,120 @@
+﻿@model ToDoApp.Models.ToDoItem
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Add/Update Task</h4>
+<br />
+
+<div class="container">    
+    <form id="create-form" asp-action="AddOrEdit" method="post" onsubmit="return jQueryPost(this);">
+        <div class=" row">
+            <div class="col-md-4">
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" id="txtId"/>
+                <div class="form-group margin-bottom10">
+                    <label asp-for="Task" class="control-label margin-bottom5"></label>
+                    <input asp-for="Task" class="form-control" id="txtTask" />
+                    <span asp-validation-for="Task" class="text-danger"></span>
+                </div>
+                <div class="form-group margin-bottom10">
+                    <label asp-for="EndDate" class="control-label margin-bottom5"></label>
+                    <input asp-for="EndDate" class="form-control" id="txtEndDate" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group margin-bottom10">
+                    <label asp-for="Status" class="control-label margin-bottom5"></label>
+                    <input asp-for="Status" class="form-control" id="txtStatus" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>  
+                <div class="form-group margin-bottom10">
+                    <label asp-for="Assignee" class="control-label margin-bottom5"></label>
+                    <input asp-for="Assignee" class="form-control" id="txtAssignee" />
+                    <span asp-validation-for="Assignee" class="text-danger"></span>
+                </div>
+                <div class="row" style="margin-top:30px">
+                    <div class="col-md-3">                    
+                        <input type="submit" value="Submit" class="btn btn-primary" />                    
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-secondary" asp-action="Index">Back ToDo</a>
+                    </div>                    
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4">
+                <div class=" row" style="margin-bottom:22px">
+                    <div class="col-md2">
+                        <label class="margin-bottom5">Assignee Photo: </label>
+                    </div>
+                    <div class="col-md10">
+                        <input id="txtFile" onchange="jQueryShowImg(event)" type="file" value="Upload File" style="width:100%;"/>
+                    </div>
+                </div>
+                <div class=" row">
+                    <div class="col-md6">
+                        <img id="imgViewer" src="data:image/jpg;base64," + @Model.Photo width="200" height="200" style="border: 1px solid #000000;" />
+                    </div>                
+                </div>            
+            </div>
+        </div>        
+    </form>    
+</div>   
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function() { 
+            jQueryPost = form => {
+                $('#create-form').validate();
+
+                if ($('#create-form').valid() === true) {
+                    var files = $("#txtFile").prop("files");
+                    var formData = new FormData();
+                
+                    formData.append("file", files[0]);
+
+                    var oToDoItem = {
+                        Id:  $("#txtId")[0].value,
+                        Task: $("#txtTask")[0].value,
+                        EndDate: $("#txtEndDate")[0].value,
+                        Status: $("#txtStatus")[0].value,
+                        Assignee: $("#txtAssignee")[0].value
+                    };               
+
+                    formData.append("ToDoItem", JSON.stringify(oToDoItem));               
+
+                    try {
+                        $.ajax({
+                            type: 'POST',
+                            url: form.action,
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(res) {
+                                if (res.success) {
+                                    window.location.href = '@(Url.Action("Index", "ToDo"))'
+                                }
+                            },
+                            error: function(err) {
+                                console.log(err)
+                            }
+                        })
+                        return false;
+                    } catch (ex) {
+                        console.log(ex)
+                    }                
+                };
+            };
+
+            jQueryShowImg = event => {
+                var files = event.target.files;
+                $("#imgViewer").attr("src", window.URL.createObjectURL(files[0]));
+            }; 
+        });
+    </script>
+}
