@@ -57,7 +57,7 @@
                     <div class="col-md6">
                         @if(@Model.Photo != null)
                         {
-                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)"   width="200" height="200" style="border: 1px solid #000000;" />    
+                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)"   width="200" height="200" style="border: 1px solid #000000;" />
                         } 
                         else
                         {
@@ -76,17 +76,21 @@
     <script>
         $(document).ready(function() { 
             jQueryPost = form => {
-                console.log($("#imgViewer").attr("src"));
-
                 $('#create-form').validate();                
 
                 if ($('#create-form').valid() === true) {
-                    var files = $("#txtFile").prop("files");
-                    
-
                     var formData = new FormData();
-                
-                    formData.append("file", files[0]);
+                    var dataurl = $("#imgViewer").attr("src");
+
+                    var arr = dataurl.split(','),
+                    mime = arr[0].match(/:(.*?);/)[1],
+                    bstr = atob(arr[1]), 
+                    n = bstr.length, 
+                    u8arr = new Uint8Array(n);            
+                    while(n--) {u8arr[n] = bstr.charCodeAt(n);}        
+                    var file = new File([u8arr], "imgfile", {type:"image/png"});
+                    
+                    formData.append("file", file);
 
                     var oToDoItem = {
                         Id:  $("#txtId")[0].value,
@@ -107,7 +111,7 @@
                             contentType: false,
                             success: function(res) {
                                 if (res.success) {
-                                   window.location.href = '@(Url.Action("Index", "ToDo"))'
+                                  window.location.href = '@(Url.Action("Index", "ToDo"))'
                                 }
                             },
                             error: function(err) {
@@ -122,8 +126,14 @@
             };
 
             jQueryShowImg = event => {
-                var files = event.target.files;
-                $("#imgViewer").attr("src", window.URL.createObjectURL(files[0]));
+                var files = event.target.files;                
+
+                var reader = new FileReader();
+                reader.readAsDataURL(files[0]); 
+                reader.onloadend = function() {
+                    var base64data = reader.result;
+                    $("#imgViewer").attr("src", base64data);                    
+                }
             }; 
         });
     </script>

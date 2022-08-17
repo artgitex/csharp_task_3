@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApp.Web", "ToDoApp.Web.csproj", "{0B079543-E7EE-4944-A28A-782E20D36E15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApp.Identity", "..\AuthenticationServer\ToDoApp.Identity.csproj", "{5B4BDCF6-D345-434B-BA33-6F0C417D092F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApp.Identity", "..\ToDoApp.Identity\ToDoApp.Identity.csproj", "{7CAD04AA-AB39-4FD8-8451-50875B0B80CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{0B079543-E7EE-4944-A28A-782E20D36E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B079543-E7EE-4944-A28A-782E20D36E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B079543-E7EE-4944-A28A-782E20D36E15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B4BDCF6-D345-434B-BA33-6F0C417D092F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B4BDCF6-D345-434B-BA33-6F0C417D092F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B4BDCF6-D345-434B-BA33-6F0C417D092F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B4BDCF6-D345-434B-BA33-6F0C417D092F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CAD04AA-AB39-4FD8-8451-50875B0B80CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CAD04AA-AB39-4FD8-8451-50875B0B80CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CAD04AA-AB39-4FD8-8451-50875B0B80CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CAD04AA-AB39-4FD8-8451-50875B0B80CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

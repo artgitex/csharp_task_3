@@ -116,7 +116,7 @@ public class ToDoController : Controller
         else
         {
            await _toDoRepository.UpdateAsync(oToDoItem);
-            TempData["AlertMessage"] = "Updated Successfully";
+           TempData["AlertMessage"] = "Updated Successfully";
         }       
 
         return Json(new { success = true });
