@@ -55,14 +55,20 @@
                 </div>
                 <div class=" row">
                     <div class="col-md6">
-                        <img id="imgViewer" src="data:image/jpg;base64," + @Model.Photo width="200" height="200" style="border: 1px solid #000000;" />
+                        @if(@Model.Photo != null)
+                        {
+                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)"   width="200" height="200" style="border: 1px solid #000000;" />    
+                        } 
+                        else
+                        {
+                            <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />    
+                        }
                     </div>                
                 </div>            
             </div>
         </div>        
     </form>    
-</div>   
-
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -70,10 +76,14 @@
     <script>
         $(document).ready(function() { 
             jQueryPost = form => {
-                $('#create-form').validate();
+                console.log($("#imgViewer").attr("src"));
+
+                $('#create-form').validate();                
 
                 if ($('#create-form').valid() === true) {
                     var files = $("#txtFile").prop("files");
+                    
+
                     var formData = new FormData();
                 
                     formData.append("file", files[0]);
@@ -97,7 +107,7 @@
                             contentType: false,
                             success: function(res) {
                                 if (res.success) {
-                                    window.location.href = '@(Url.Action("Index", "ToDo"))'
+                                   window.location.href = '@(Url.Action("Index", "ToDo"))'
                                 }
                             },
                             error: function(err) {
