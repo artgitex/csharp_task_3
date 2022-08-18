@@ -37,13 +37,20 @@ public class AuthController : Controller
 
         string data = JsonConvert.SerializeObject(login);
         StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-        
-        HttpResponseMessage response = client.PostAsync(client.BaseAddress, content).Result;
-        if (response.IsSuccessStatusCode)
-        {
-            var token = response.Content.ReadAsStringAsync().Result;
 
-            return RedirectToAction("Index", "ToDo");
+        try
+        {
+            HttpResponseMessage response = client.PostAsync(client.BaseAddress, content).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var token = response.Content.ReadAsStringAsync().Result;
+                HttpContext.Session.SetString("token", token);
+
+                return RedirectToAction("Index", "ToDo");
+            }
+        }
+        catch (Exception ex)
+        { 
         }
 
         return Redirect("Index");
@@ -95,7 +102,7 @@ public class AuthController : Controller
 
         await _userRepository.CreateAsync(registrationUser);
 
-        return Ok();
+        return Json(new { success = true });
     }
 
     public RedirectResult RedirectHome()
