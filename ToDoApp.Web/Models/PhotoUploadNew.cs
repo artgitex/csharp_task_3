@@ -1,7 +1,7 @@
 ﻿namespace ToDoApp.Web.Models;
 
-public class PhotoUpload
+public class PhotoUploadNew
 {
     public IFormFile file { get; set; }
-    public string ToDoItem { get; set; }
+    public string RegisterRequest { get; set; }
 }

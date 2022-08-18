@@ -1,7 +1,7 @@
-﻿using ToDoApp.DbContexts;
-using ToDoApp.Models;
+﻿using ToDoApp.Web.DbContexts;
+using ToDoApp.Web.Models;
 
-namespace ToDoApp.Data;
+namespace ToDoApp.Web.Data;
 
 public class ToDoRepository : IToDoRepository
 {

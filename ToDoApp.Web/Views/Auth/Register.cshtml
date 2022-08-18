@@ -1,45 +1,55 @@
-﻿@model ToDoApp.Web.Models.ToDoItem
+﻿@model ToDoApp.Web.Models.Requests.RegisterRequest
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "User Profile";
 }
 
-<h4>Add/Update Task</h4>
+<h4>User Profile</h4>
 <br />
 
 <div class="container">    
-    <form id="create-form" asp-action="AddOrEdit" method="post" onsubmit="return jQueryPost(this);">
+    <form id="create-form" asp-action="Register" method="post" onsubmit="return jQueryPost(this);">
         <div class=" row">
             <div class="col-md-4">
                 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" id="txtId"/>
                 <div class="form-group margin-bottom10">
-                    <label asp-for="Task" class="control-label margin-bottom5"></label>
-                    <input asp-for="Task" class="form-control" id="txtTask" />
-                    <span asp-validation-for="Task" class="text-danger"></span>
+                    <label asp-for="Name" class="control-label margin-bottom5"></label>
+                    <input asp-for="Name" class="form-control" id="txtName" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group margin-bottom10">
-                    <label asp-for="EndDate" class="control-label margin-bottom5"></label>
-                    <input asp-for="EndDate" class="form-control" id="txtEndDate" />
-                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                    <label asp-for="Email" class="control-label margin-bottom5"></label>
+                    <input asp-for="Email" class="form-control" id="txtEmail" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group margin-bottom10">
-                    <label asp-for="Status" class="control-label margin-bottom5"></label>
-                    <input asp-for="Status" class="form-control" id="txtStatus" />
-                    <span asp-validation-for="Status" class="text-danger"></span>
+                    <label asp-for="Age" class="control-label margin-bottom5"></label>
+                    <input asp-for="Age" class="form-control" id="txtAge" />
+                    <span asp-validation-for="Age" class="text-danger"></span>
                 </div>  
                 <div class="form-group margin-bottom10">
-                    <label asp-for="Assignee" class="control-label margin-bottom5"></label>
-                    <input asp-for="Assignee" class="form-control" id="txtAssignee" />
-                    <span asp-validation-for="Assignee" class="text-danger"></span>
+                    <label asp-for="EmploymentDate" class="control-label margin-bottom5"></label>
+                    <input asp-for="EmploymentDate" class="form-control" id="txtEmploymentDate" />
+                    <span asp-validation-for="EmploymentDate" class="text-danger"></span>
+                </div>
+                <div class="form-group margin-bottom10">
+                    <label asp-for="Password" class="control-label margin-bottom5"></label>
+                    <input asp-for="Password" class="form-control" id="txtPassword" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>  
+                <div class="form-group margin-bottom10">
+                    <label asp-for="ConfirmPassword" class="control-label margin-bottom5"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" id="txtConfirmPassword" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
                 <div class="row" style="margin-top:30px">
                     <div class="col-md-3">                    
                         <input type="submit" value="Submit" class="btn btn-primary" />                    
                     </div>
                     <div class="col-md-4">
-                        <a class="btn btn-secondary" asp-action="Index">Back ToDo</a>
+                        <a class="btn btn-secondary" asp-action="RedirectHome">Back Home</a>
                     </div>                    
                 </div>
             </div>
@@ -55,14 +65,7 @@
                 </div>
                 <div class=" row">
                     <div class="col-md6">
-                        @if(@Model.Photo != null)
-                        {
-                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)"   width="200" height="200" style="border: 1px solid #000000;" />
-                        } 
-                        else
-                        {
-                            <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />    
-                        }
+                        <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />                        
                     </div>                
                 </div>            
             </div>
@@ -92,15 +95,16 @@
                     
                     formData.append("file", file);
 
-                    var oToDoItem = {
-                        Id:  $("#txtId")[0].value,
-                        Task: $("#txtTask")[0].value,
-                        EndDate: $("#txtEndDate")[0].value,
-                        Status: $("#txtStatus")[0].value,
-                        Assignee: $("#txtAssignee")[0].value
-                    };               
+                    var oRegisterRequest = {                        
+                        Name: $("#txtName")[0].value,
+                        Email: $("#txtEmail")[0].value,
+                        Age: $("#txtAge")[0].value,
+                        EmploymentDate: $("#txtEmploymentDate")[0].value,
+                        Password: $("#txtPassword")[0].value,
+                        ConfirmPassword: $("#txtConfirmPassword")[0].value                        
+                    };                    
 
-                    formData.append("ToDoItem", JSON.stringify(oToDoItem));               
+                    formData.append("RegisterRequest", JSON.stringify(oRegisterRequest));               
 
                     try {
                         $.ajax({
@@ -111,7 +115,7 @@
                             contentType: false,
                             success: function(res) {
                                 if (res.success) {
-                                  window.location.href = '@(Url.Action("Index", "ToDo"))'
+                                  //window.location.href = '@(Url.Action("Index", "ToDo"))'
                                 }
                             },
                             error: function(err) {

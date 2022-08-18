@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace ToDoApp.Models;
+namespace ToDoApp.Web.Models;
 
 public class ToDoItem
 {

@@ -1,0 +1,40 @@
+﻿@model ToDoApp.Web.Models.Requests.LoginRequest
+
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<br />
+
+<section>
+    <div class="row d-flex justify-content-center col-12">
+        <div class="col-3 border border-primary rounded m-20">
+            <form id="login-form" method="post" class="py-5">                
+                <div class="d-flex justify-content-center">
+                    <i class="icon-map-marker icon-4x text-success"></i>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>                    
+                </div>
+                <div class="form-group" style="margin-bottom:20px">
+                    <input asp-for="Email" class="form-control" placeholder="Email address" required autofocus id="txtEmail"/>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom:40px">
+                    <input asp-for="Password" class="form-control" placeholder="Password" required id="txtPassword"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">                    
+                    <button type="submit" asp-controller="Auth" asp-action="SendLoginData" asp-route-email="@ViewData["Email"]" asp-route-password="@ViewData["Password"]" class="btn btn-lg btn-success btn-block col-12">Log in</button>                    
+                </div>                
+                <div class="col-12" style="margin-top:20px;text-align:center">                    
+                    <a asp-controller="Auth" asp-action="UserProfile" style="text-decoration:none">Register as a New user</a>
+                </div>                
+            </form>
+        </div>        
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+}

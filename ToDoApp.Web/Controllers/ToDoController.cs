@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApp.DbContexts;
-using ToDoApp.Models;
+using ToDoApp.Web.DbContexts;
+using ToDoApp.Web.Models;
 using System.Linq.Dynamic.Core;
 using Newtonsoft.Json;
-using ToDoApp.Data;
+using ToDoApp.Web.Data;
 
-namespace ToDoApp.Controllers;
+namespace ToDoApp.Web.Controllers;
 
 public class ToDoController : Controller
 {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ToDoApp.Data;
-using ToDoApp.DbContexts;
+using ToDoApp.Web.Data;
+using ToDoApp.Web.DbContexts;
+using ToDoApp.Web.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,8 @@ builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(
     ));
 
 builder.Services.AddScoped<IToDoRepository, ToDoRepository>();
-
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<PasswordHasher>();
 
 var app = builder.Build();
 
@@ -41,6 +43,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=ToDo}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Index}/{id?}");
 
 app.Run();

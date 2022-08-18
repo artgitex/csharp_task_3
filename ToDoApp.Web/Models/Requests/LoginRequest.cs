@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AuthenticationServer.Models.Requests;
+namespace ToDoApp.Web.Models.Requests;
 
 public class LoginRequest
 {

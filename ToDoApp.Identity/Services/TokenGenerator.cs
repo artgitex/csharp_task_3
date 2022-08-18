@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ToDoApp.Identity.Models;
 
 namespace AuthenticationServer.Services;
 
@@ -15,7 +16,7 @@ public class TokenGenerator
         _authenticationConfiguration = authenticationConfiguration;
     }
 
-    public string GenerateToken(User user)
+    public string GenerateToken(UserProfile user)
     {
         SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationConfiguration.AccessTokenSecret));        
 
@@ -24,8 +25,7 @@ public class TokenGenerator
         List<Claim> claims = new List<Claim>()
         {
             new Claim("id", user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Username)
+            new Claim(ClaimTypes.Email, user.Email)            
         };
 
         JwtSecurityToken token = new JwtSecurityToken(
@@ -33,7 +33,8 @@ public class TokenGenerator
             _authenticationConfiguration.Audience,
             claims,
             DateTime.UtcNow,
-            DateTime.UtcNow.AddMinutes(_authenticationConfiguration.AccessTokenExpirationMinutes)
+            DateTime.UtcNow.AddMinutes(_authenticationConfiguration.AccessTokenExpirationMinutes),
+            credentials
             );
 
         return new JwtSecurityTokenHandler().WriteToken(token);

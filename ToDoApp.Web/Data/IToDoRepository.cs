@@ -1,6 +1,6 @@
-﻿using ToDoApp.Models;
+﻿using ToDoApp.Web.Models;
 
-namespace ToDoApp.Data;
+namespace ToDoApp.Web.Data;
 
 public interface IToDoRepository
 {
