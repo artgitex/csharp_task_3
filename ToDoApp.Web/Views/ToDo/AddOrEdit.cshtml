@@ -25,15 +25,19 @@
                     <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
                 <div class="form-group margin-bottom10">
-                    <label asp-for="Status" class="control-label margin-bottom5"></label>
-                    <input asp-for="Status" class="form-control" id="txtStatus" />
-                    <span asp-validation-for="Status" class="text-danger"></span>
-                </div>  
-                <div class="form-group margin-bottom10">
                     <label asp-for="Assignee" class="control-label margin-bottom5"></label>
                     <input asp-for="Assignee" class="form-control" id="txtAssignee" />
                     <span asp-validation-for="Assignee" class="text-danger"></span>
-                </div>
+                </div>                
+                <div class="form-group margin-bottom10">
+                    <div class="margin-bottom5">Status</div>
+                    <select class="col-md-12 form-control" asp-for="Status" name="Status" id="txtStatus">                            
+                        <option value="New">New</option>
+                        <option value="InProgress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>  
                 <div class="row" style="margin-top:30px">
                     <div class="col-md-3">                    
                         <input type="submit" value="Submit" class="btn btn-primary" />                    
@@ -42,30 +46,7 @@
                         <a class="btn btn-secondary" asp-action="Index">Back ToDo</a>
                     </div>                    
                 </div>
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-4">
-                <div class=" row" style="margin-bottom:22px">
-                    <div class="col-md2">
-                        <label class="margin-bottom5">Assignee Photo: </label>
-                    </div>
-                    <div class="col-md10">
-                        <input id="txtFile" onchange="jQueryShowImg(event)" type="file" value="Upload File" style="width:100%;"/>
-                    </div>
-                </div>
-                <div class=" row">
-                    <div class="col-md6">
-                        @if(@Model.Photo != null)
-                        {
-                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)"   width="200" height="200" style="border: 1px solid #000000;" />
-                        } 
-                        else
-                        {
-                            <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />    
-                        }
-                    </div>                
-                </div>            
-            </div>
+            </div>            
         </div>        
     </form>    
 </div>
@@ -73,45 +54,21 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(document).ready(function() { 
-            jQueryPost = form => {
-                $('#create-form').validate();                
+    <script>        
+        $(document).ready(function() {
+
+            jQueryPost = form => {                  
+                $('#create-form').validate();
 
                 if ($('#create-form').valid() === true) {
-                    var formData = new FormData();
-                    var dataurl = $("#imgViewer").attr("src");
-
-                    var arr = dataurl.split(','),
-                    mime = arr[0].match(/:(.*?);/)[1],
-                    bstr = atob(arr[1]), 
-                    n = bstr.length, 
-                    u8arr = new Uint8Array(n);            
-                    while(n--) {u8arr[n] = bstr.charCodeAt(n);}        
-                    var file = new File([u8arr], "imgfile", {type:"image/png"});
-                    
-                    formData.append("file", file);
-
-                    var oToDoItem = {
-                        Id:  $("#txtId")[0].value,
-                        Task: $("#txtTask")[0].value,
-                        EndDate: $("#txtEndDate")[0].value,
-                        Status: $("#txtStatus")[0].value,
-                        Assignee: $("#txtAssignee")[0].value
-                    };               
-
-                    formData.append("ToDoItem", JSON.stringify(oToDoItem));               
-
                     try {
                         $.ajax({
                             type: 'POST',
                             url: form.action,
-                            data: formData,
-                            processData: false,
-                            contentType: false,
+                            data: $(form).serialize(),
                             success: function(res) {
                                 if (res.success) {
-                                  window.location.href = '@(Url.Action("Index", "ToDo"))'
+                                    window.location.href = '@(Url.Action("Index", "ToDo"))'
                                 }
                             },
                             error: function(err) {
@@ -121,20 +78,9 @@
                         return false;
                     } catch (ex) {
                         console.log(ex)
-                    }                
-                };
-            };
-
-            jQueryShowImg = event => {
-                var files = event.target.files;                
-
-                var reader = new FileReader();
-                reader.readAsDataURL(files[0]); 
-                reader.onloadend = function() {
-                    var base64data = reader.result;
-                    $("#imgViewer").attr("src", base64data);                    
+                    }
                 }
-            }; 
+            }
         });
     </script>
 }

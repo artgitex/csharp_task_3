@@ -5,6 +5,7 @@ using ToDoApp.Web.Models;
 using System.Linq.Dynamic.Core;
 using Newtonsoft.Json;
 using ToDoApp.Web.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoApp.Web.Controllers;
 
@@ -12,14 +13,17 @@ public class ToDoController : Controller
 {
     private readonly ToDoDbContext _context;
     private readonly IToDoRepository _toDoRepository;
+    private readonly IUserRepository _userRepository;    
 
-    public ToDoController(ToDoDbContext context, IToDoRepository toDoRepository)
+    public ToDoController(ToDoDbContext context, IToDoRepository toDoRepository, IUserRepository userRepository)
     {
         _context = context;
         _toDoRepository = toDoRepository;
-    }              
+        _userRepository = userRepository;
+    }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> GetData()
     {              
         var draw = Request.Form["draw"].FirstOrDefault();
@@ -34,11 +38,13 @@ public class ToDoController : Controller
 
         var todoItems = _toDoRepository.SetQueryable();
 
+        /*
         foreach (ToDoItem row in todoItems)
         {
             if (row.Photo != null)
                 row.Photo = this.GetImage(Convert.ToBase64String(row.Photo));                
         }
+        */
 
         if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
         {
@@ -68,7 +74,7 @@ public class ToDoController : Controller
     }
 
     public byte[] GetImage(string sBase64String)
-    {
+    {        
         byte[] bytes = null;
         if (!string.IsNullOrEmpty(sBase64String))
         {
@@ -77,45 +83,38 @@ public class ToDoController : Controller
 
         return bytes;
     }
-
+           
+    [HttpGet]
+    //[Authorize] 
     public async Task<IActionResult> Index()
-    {
+    {        
         return View();            
     }
             
     public async Task<IActionResult> AddOrEdit(int id = 0)
     {
+        
         if (id == 0)
+        {
             return View(new ToDoItem());
+        }
         else
-        {  
+        {            
             return View(await _toDoRepository.GetByIdAsync(id));
         }
     }        
    
     [HttpPost]        
-    public async Task<IActionResult> AddOrEdit(PhotoUpload fileObj)
-    {
-        ToDoItem oToDoItem = JsonConvert.DeserializeObject<ToDoItem>(fileObj.ToDoItem);
-
-        if (fileObj.file != null)
+    public async Task<IActionResult> AddOrEdit(ToDoItem todoItem)
+    { 
+        if (todoItem.Id == 0)
         {
-            using (var ms = new MemoryStream())
-            {
-                fileObj.file.CopyTo(ms);
-                var fileBytes = ms.ToArray();
-                oToDoItem.Photo = fileBytes;
-            }
-        }
-
-        if (oToDoItem.Id == 0)
-        {
-            await _toDoRepository.CreateAsync(oToDoItem);           
+            await _toDoRepository.CreateAsync(todoItem);           
             TempData["AlertMessage"] = "Created Successfully";
         }
         else
         {
-           await _toDoRepository.UpdateAsync(oToDoItem);
+           await _toDoRepository.UpdateAsync(todoItem);
            TempData["AlertMessage"] = "Updated Successfully";
         }       
 

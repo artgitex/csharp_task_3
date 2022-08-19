@@ -1,13 +1,35 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using ToDoApp.Web.Data;
 using ToDoApp.Web.DbContexts;
 using ToDoApp.Web.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AuthenticationConfiguration authenticationConfiguration = new AuthenticationConfiguration();
+ConfigurationManager configuration = builder.Configuration;
+configuration.Bind("Authentication", authenticationConfiguration);
+builder.Services.AddSingleton(authenticationConfiguration);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
+{
+    o.TokenValidationParameters = new TokenValidationParameters()
+    {
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationConfiguration.AccessTokenSecret)),
+        ValidIssuer = authenticationConfiguration.Issuer,
+        ValidAudience = authenticationConfiguration.Audience,
+        ValidateIssuerSigningKey = true,
+        ValidateAudience = true,
+        ValidateIssuer = true
+    };
+});
+
+builder.Services.AddSession();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
 
 builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
@@ -23,9 +45,32 @@ using (IServiceScope scope = app.Services.CreateScope())
 {
     using (ToDoDbContext context = scope.ServiceProvider.GetRequiredService<ToDoDbContext>())
     {
-        context.Database.EnsureCreated();
+        try
+        {
+            context.Database.EnsureCreated();
+        }
+        catch (Exception ex)
+        {
+            /*
+            MessageBox.Show("Db is not properly configured!",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            */
+        }
     }
 }
+app.UseSession();
+app.Use(async (context, next) =>
+{
+    var token = context.Session.GetString("Token");
+    if (!string.IsNullOrEmpty(token))
+    {
+        context.Request.Headers.Add("Authorization", "Bearer " + token);
+    }
+    await next();
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -37,10 +82,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -28,8 +28,7 @@
             <th>Task</th>
             <th>End Date</th>
             <th>Status</th>
-            <th>Assignee</th>
-            <th>Photo</th>
+            <th>Assignee</th>            
             <th></th>
         </tr>
     </thead>    
@@ -43,13 +42,21 @@
     <script>
         var Popup, dataTable;
         $(document).ready(function() {
+
+            var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhQGlibS5jb20iLCJuYmYiOjE2NjA5MjMwNDQsImV4cCI6MTY2MDkyNDg0NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3NSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzUifQ.u-mikUlVkYZgk19wk5gEKBDRemF6kAD5NMUi5qIQJ4E";
+            console.log("Token " + sessionStorage.getItem("Token"));
+
             dataTable = $("#todoDataTable").DataTable({  
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
                     "url": "/ToDo/GetData",
                     "type": "POST",
-                    "datatype": "json"                    
+                    "datatype": "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "Authorization": "Bearer " + token
+                    }
                 }, 
                 "columnDefs": [{
                     "targets": [0],
@@ -61,19 +68,7 @@
                     { "data": "task", "name": "Task" },
                     { "data": "endDate", "name": "EndDate", "width":"150px" },
                     { "data": "status", "name": "Status", "width":"150px"  },
-                    { "data": "assignee", "name": "Assignee", "width":"200px"  },
-                    { "data": "photo" ,
-                      "render": function ( data) {
-                          if (data) {
-                              return '<img src="data:image/jpg;base64,' + data + '" width="50px" height="50px">';
-                          } else {
-                              return null;
-                          }
-                      },
-                      "orderable": false,
-                      "searchable":false,
-                      "width":"150px"
-                    },
+                    { "data": "assignee", "name": "Assignee", "width":"200px"  },                    
                     { "data": "id", "render" : function (data) {                             
                         return "<a class='btn btn-primary btn-sm' onclick=location.href='@(Url.Action("AddOrEdit", "ToDo"))/" +data+ "'><i class='fa fa-pencil'></i>Edit</a><a class='btn btn-danger btn-sm' style='margin-left:5px' onclick=Delete("+data+")><i class='fa fa-trash'></i> Delete</a>";
                     },

@@ -11,7 +11,7 @@ namespace ToDoApp.Web.Controllers;
 public class AuthController : Controller
 {
     private readonly IUserRepository _userRepository;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly PasswordHasher _passwordHasher;    
 
     Uri baseAddress = new Uri("https://localhost:7275/login");
     HttpClient client;
@@ -25,9 +25,13 @@ public class AuthController : Controller
         client.BaseAddress = baseAddress;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string? msg)
     {
-        return View();
+        LoginRequest loginRequest = new LoginRequest();
+        if (msg != null)
+            loginRequest.Message = msg;
+
+        return View(loginRequest);
     }
     public IActionResult SendLoginData(string email, string password)
     {        
@@ -44,7 +48,9 @@ public class AuthController : Controller
             if (response.IsSuccessStatusCode)
             {
                 var token = response.Content.ReadAsStringAsync().Result;
-                HttpContext.Session.SetString("token", token);
+                HttpContext.Session.SetString("Token", token);
+                
+                var value = HttpContext.Session.GetString("Token");
 
                 return RedirectToAction("Index", "ToDo");
             }
@@ -52,8 +58,8 @@ public class AuthController : Controller
         catch (Exception ex)
         { 
         }
-
-        return Redirect("Index");
+        
+        return RedirectToAction("Index", new { msg = "Email/Password is incorrect!"});
     }
 
     public IActionResult UserProfile()
@@ -62,7 +68,7 @@ public class AuthController : Controller
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(PhotoUploadNew fileObj)
+    public async Task<IActionResult> Register(PhotoUpload fileObj)
     {
         RegisterRequest oRegisterRequest = JsonConvert.DeserializeObject<RegisterRequest>(fileObj.RegisterRequest);
 
@@ -75,7 +81,6 @@ public class AuthController : Controller
                 oRegisterRequest.Photo = fileBytes;
             }
         }
-
         
         if (oRegisterRequest.Password != oRegisterRequest.ConfirmPassword)
         {

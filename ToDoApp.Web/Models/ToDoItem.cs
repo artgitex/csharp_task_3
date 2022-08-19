@@ -19,7 +19,7 @@ public class ToDoItem
     public string Status { get; set; }
 
     [Required]
-    public string Assignee { get; set; }
-
-    public byte[]? Photo { get; set; }
+    [EmailAddress]    
+    public string? Assignee { get; set; }
+        
 }
