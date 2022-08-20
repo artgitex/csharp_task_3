@@ -45,12 +45,24 @@
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
                 <div class="row" style="margin-top:30px">
-                    <div class="col-md-3">                    
-                        <input type="submit" value="Submit" class="btn btn-primary" />                    
-                    </div>
-                    <div class="col-md-4">
-                        <a class="btn btn-secondary" asp-controller="Auth" asp-action="Index">Back Log In</a>
-                    </div>                    
+                    @if (!Context.User.Identity.IsAuthenticated)
+                    {
+                        <div class="col-md-3">                    
+                            <input type="submit" value="Submit" class="btn btn-primary" />                    
+                        </div>
+                    }
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        <div class="col-md-4">
+                            <a class="btn btn-secondary" asp-controller="ToDo" asp-action="Index">Back ToDo</a>                            
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-4">
+                            <a class="btn btn-secondary" asp-controller="Auth" asp-action="Index">Back Log In</a>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="col-md-1"></div>
@@ -65,7 +77,14 @@
                 </div>
                 <div class=" row">
                     <div class="col-md6">
-                        <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />                        
+                        @if(@Model.Photo != null)
+                        {
+                            <img id="imgViewer" src="data:image/jpg;base64,@Convert.ToBase64String(@Model.Photo)" width="200" height="200" style="border: 1px solid #000000;" />
+                        } 
+                        else
+                        {
+                            <img id="imgViewer" src="" width="200" height="200" style="border: 1px solid #000000;" />    
+                        }
                     </div>                
                 </div>            
             </div>

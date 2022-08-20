@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text;
 using ToDoApp.Web.Data;
 using ToDoApp.Web.Models;
@@ -74,10 +75,26 @@ public class AuthController : Controller
         return RedirectToAction("Index", "Auth");
     }
 
-    public IActionResult UserProfile()
+    public async Task<IActionResult> UserProfile(int id = 0)
     {
-        return View("Register");
-    }
+        if (id == 0)
+        {
+            return View("Register");            
+        }
+        else
+        {
+            string idUser = HttpContext.User.FindFirstValue("id");
+            UserProfile userProfile = await _userRepository.GetByIdAsync(int.Parse(idUser));
+            RegisterRequest registerRequest = new RegisterRequest() {
+                Name = userProfile.Name,
+                Email = userProfile.Email,
+                Age = userProfile.Age,
+                EmploymentDate = userProfile.EmploymentDate,
+                Photo = userProfile.Photo
+            };
+            return View("Register", registerRequest);            
+        }        
+    }       
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(PhotoUpload fileObj)
