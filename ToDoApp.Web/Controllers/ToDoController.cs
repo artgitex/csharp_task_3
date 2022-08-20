@@ -85,7 +85,7 @@ public class ToDoController : Controller
     }
            
     [HttpGet]
-    //[Authorize] 
+    [Authorize] 
     public async Task<IActionResult> Index()
     {        
         return View();            
@@ -104,7 +104,8 @@ public class ToDoController : Controller
         }
     }        
    
-    [HttpPost]        
+    [HttpPost]
+    [Authorize]
     public async Task<IActionResult> AddOrEdit(ToDoItem todoItem)
     { 
         if (todoItem.Id == 0)
@@ -123,6 +124,7 @@ public class ToDoController : Controller
 
 
     [HttpPost, ActionName("Delete")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         await _toDoRepository.RemoveAsync(id);

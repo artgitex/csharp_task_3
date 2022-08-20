@@ -48,9 +48,7 @@ public class AuthController : Controller
             if (response.IsSuccessStatusCode)
             {
                 var token = response.Content.ReadAsStringAsync().Result;
-                HttpContext.Session.SetString("Token", token);
-                
-                var value = HttpContext.Session.GetString("Token");
+                HttpContext.Session.SetString("Token", token);                
 
                 return RedirectToAction("Index", "ToDo");
             }

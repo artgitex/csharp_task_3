@@ -41,22 +41,14 @@
 
     <script>
         var Popup, dataTable;
-        $(document).ready(function() {
-
-            var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhQGlibS5jb20iLCJuYmYiOjE2NjA5MjMwNDQsImV4cCI6MTY2MDkyNDg0NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzI3NSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcyNzUifQ.u-mikUlVkYZgk19wk5gEKBDRemF6kAD5NMUi5qIQJ4E";
-            console.log("Token " + sessionStorage.getItem("Token"));
-
+        $(document).ready(function() {            
             dataTable = $("#todoDataTable").DataTable({  
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
                     "url": "/ToDo/GetData",
                     "type": "POST",
-                    "datatype": "json",
-                    headers: {
-                        "Accept": "application/json",
-                        "Authorization": "Bearer " + token
-                    }
+                    "datatype": "json",                    
                 }, 
                 "columnDefs": [{
                     "targets": [0],
