@@ -1,10 +1,7 @@
-﻿using AuthenticationServer.Models;
-using AuthenticationServer.Models.Requests;
+﻿using AuthenticationServer.Models.Requests;
 using AuthenticationServer.Services;
-using AuthenticationServer.Services.UserRepository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using ToDoApp.Identity.Data;
 using ToDoApp.Identity.Models;
 
 namespace AuthenticationServer.Controllers;
@@ -40,6 +37,5 @@ public class AuthController : Controller
         string accessToken = _tokenGenerator.GenerateToken(user);
 
         return Ok(accessToken);
-    }        
-    
+    }    
 }

@@ -1,5 +1,4 @@
-﻿using AuthenticationServer.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ToDoApp.Identity.Models;
 
 namespace AuthenticationServer.DbContexts;

@@ -1,7 +1,7 @@
 using AuthenticationServer.DbContexts;
 using AuthenticationServer.Models;
 using AuthenticationServer.Services;
-using AuthenticationServer.Services.UserRepository;
+using ToDoApp.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
