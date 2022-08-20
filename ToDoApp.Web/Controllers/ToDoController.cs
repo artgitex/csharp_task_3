@@ -6,20 +6,27 @@ using System.Linq.Dynamic.Core;
 using Newtonsoft.Json;
 using ToDoApp.Web.Data;
 using Microsoft.AspNetCore.Authorization;
+using ToDoApp.Web.Service.Logger;
 
 namespace ToDoApp.Web.Controllers;
 
 public class ToDoController : Controller
-{
-    private readonly ToDoDbContext _context;
+{    
     private readonly IToDoRepository _toDoRepository;
-    private readonly IUserRepository _userRepository;    
+    private readonly IUserRepository _userRepository;
+    private readonly ILoggerService _logger;
+    private readonly ToDoDbContext _context;
 
-    public ToDoController(ToDoDbContext context, IToDoRepository toDoRepository, IUserRepository userRepository)
+    public ToDoController(        
+        IToDoRepository toDoRepository,
+        IUserRepository userRepository,
+        ILoggerService logger,
+        ToDoDbContext context)
     {
         _context = context;
         _toDoRepository = toDoRepository;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -70,6 +77,7 @@ public class ToDoController : Controller
                 .Take(pageSize)
                 .ToListAsync()
         };
+        _logger.LogInfo("DataTable is ready");
         return Ok(jsonData);
     }
 
@@ -95,7 +103,7 @@ public class ToDoController : Controller
     {
         
         if (id == 0)
-        {
+        {         
             return View(new ToDoItem());
         }
         else
@@ -110,12 +118,14 @@ public class ToDoController : Controller
     { 
         if (todoItem.Id == 0)
         {
-            await _toDoRepository.CreateAsync(todoItem);           
+            await _toDoRepository.CreateAsync(todoItem);
+            _logger.LogInfo("New task added");
             TempData["AlertMessage"] = "Created Successfully";
         }
         else
         {
            await _toDoRepository.UpdateAsync(todoItem);
+           _logger.LogInfo("Task updated");
            TempData["AlertMessage"] = "Updated Successfully";
         }       
 
@@ -128,7 +138,7 @@ public class ToDoController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         await _toDoRepository.RemoveAsync(id);
-        
+        _logger.LogInfo("Task deleted successfully");
         return Json(new { success = true });
     }
 }

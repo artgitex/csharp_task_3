@@ -5,8 +5,10 @@ using System.Text;
 using ToDoApp.Web.Data;
 using ToDoApp.Web.DbContexts;
 using ToDoApp.Web.Service;
+using ToDoApp.Web.Service.Logger;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<ILoggerService, LoggerService>();
 
 AuthenticationConfiguration authenticationConfiguration = new AuthenticationConfiguration();
 ConfigurationManager configuration = builder.Configuration;
@@ -50,14 +52,8 @@ using (IServiceScope scope = app.Services.CreateScope())
             context.Database.EnsureCreated();
         }
         catch (Exception ex)
-        {
-            /*
-            MessageBox.Show("Db is not properly configured!",
-                "Error",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
-            */
+        {           
+           
         }
     }
 }

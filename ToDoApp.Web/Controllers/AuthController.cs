@@ -5,24 +5,27 @@ using ToDoApp.Web.Data;
 using ToDoApp.Web.Models;
 using ToDoApp.Web.Models.Requests;
 using ToDoApp.Web.Service;
+using ToDoApp.Web.Service.Logger;
 
 namespace ToDoApp.Web.Controllers;
 
 public class AuthController : Controller
 {
     private readonly IUserRepository _userRepository;
+    private readonly ILoggerService _logger;
     private readonly PasswordHasher _passwordHasher;    
 
     Uri baseAddress = new Uri("https://localhost:7275/login");
     HttpClient client;
 
-    public AuthController(IUserRepository userRepository, PasswordHasher passwordHasher)
+    public AuthController(IUserRepository userRepository, PasswordHasher passwordHasher, ILoggerService logger)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
 
         client = new HttpClient();
         client.BaseAddress = baseAddress;
+        _logger = logger;
     }
 
     public IActionResult Index(string? msg)
@@ -34,7 +37,9 @@ public class AuthController : Controller
         return View(loginRequest);
     }
     public IActionResult SendLoginData(string email, string password)
-    {        
+    {
+        _logger.LogInfo("Sending Authenticating data - start");
+
         LoginRequest login = new LoginRequest();
         login.Email = email;
         login.Password = password;
@@ -48,15 +53,18 @@ public class AuthController : Controller
             if (response.IsSuccessStatusCode)
             {
                 var token = response.Content.ReadAsStringAsync().Result;
-                HttpContext.Session.SetString("Token", token);                
+                HttpContext.Session.SetString("Token", token);
 
+                _logger.LogInfo("Sending Authenticating data - token received and saved");
+                _logger.LogInfo("Sending Authenticating data - end");
                 return RedirectToAction("Index", "ToDo");
             }
         }
         catch (Exception ex)
         { 
         }
-        
+
+        _logger.LogError("Sending Authenticating data - token is not received");
         return RedirectToAction("Index", new { msg = "Email/Password is incorrect!"});
     }
 
@@ -68,6 +76,8 @@ public class AuthController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register(PhotoUpload fileObj)
     {
+        _logger.LogInfo("Register new user - start");
+
         RegisterRequest oRegisterRequest = JsonConvert.DeserializeObject<RegisterRequest>(fileObj.RegisterRequest);
 
         if (fileObj.file != null)
@@ -82,12 +92,14 @@ public class AuthController : Controller
         
         if (oRegisterRequest.Password != oRegisterRequest.ConfirmPassword)
         {
+            _logger.LogError("Register new user - Password and Confirm Password is not equal");
             return BadRequest();
         }
 
         UserProfile existingUserByEmail = await _userRepository.GetByEmailAsync(oRegisterRequest.Email);
         if (existingUserByEmail != null)
         {
+            _logger.LogError("Register new user - User already exist");
             return Conflict();
         }
 
@@ -104,7 +116,7 @@ public class AuthController : Controller
         };
 
         await _userRepository.CreateAsync(registrationUser);
-
+        _logger.LogInfo("Register new user - end");
         return Json(new { success = true });
     }
 
