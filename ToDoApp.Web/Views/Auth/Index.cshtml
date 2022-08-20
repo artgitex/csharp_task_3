@@ -29,7 +29,7 @@
                     <div class="col-12" style="text-align:center;color:red">@Model.Message</div>
                 }
                 <div class="form-group" style="margin-top:5px">                    
-                    <button type="submit" asp-controller="Auth" asp-action="SendLoginData" asp-route-email="@ViewData["Email"]" asp-route-password="@ViewData["Password"]" class="btn btn-lg btn-success btn-block col-12">Log in</button>                    
+                    <button type="submit" asp-controller="Auth" asp-action="Login" asp-route-email="@ViewData["Email"]" asp-route-password="@ViewData["Password"]" class="btn btn-lg btn-success btn-block col-12">Log in</button>                    
                 </div>                
                 <div class="col-12" style="margin-top:20px;text-align:center">                    
                     <a asp-controller="Auth" asp-action="UserProfile" style="text-decoration:none">Register as a New user</a>

@@ -36,7 +36,7 @@ public class AuthController : Controller
 
         return View(loginRequest);
     }
-    public IActionResult SendLoginData(string email, string password)
+    public IActionResult Login(string email, string password)
     {
         _logger.LogInfo("Sending Authenticating data - start");
 
@@ -66,6 +66,12 @@ public class AuthController : Controller
 
         _logger.LogError("Sending Authenticating data - token is not received");
         return RedirectToAction("Index", new { msg = "Email/Password is incorrect!"});
+    }
+
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("Token");
+        return RedirectToAction("Index", "Auth");
     }
 
     public IActionResult UserProfile()
