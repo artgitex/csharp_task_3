@@ -14,16 +14,14 @@ public class ToDoController : Controller
 {    
     private readonly IToDoRepository _toDoRepository;
     private readonly IUserRepository _userRepository;
-    private readonly ILoggerService _logger;
-    private readonly ToDoDbContext _context;
+    private readonly ILoggerService _logger;    
 
     public ToDoController(        
         IToDoRepository toDoRepository,
         IUserRepository userRepository,
         ILoggerService logger,
         ToDoDbContext context)
-    {
-        _context = context;
+    {        
         _toDoRepository = toDoRepository;
         _userRepository = userRepository;
         _logger = logger;
@@ -44,15 +42,7 @@ public class ToDoController : Controller
         int recordsTotal = 0;
 
         var todoItems = _toDoRepository.SetQueryable();
-
-        /*
-        foreach (ToDoItem row in todoItems)
-        {
-            if (row.Photo != null)
-                row.Photo = this.GetImage(Convert.ToBase64String(row.Photo));                
-        }
-        */
-
+       
         if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
         {
             todoItems = todoItems.OrderBy(sortColumn + " " + sortColumnDirection);
@@ -66,7 +56,7 @@ public class ToDoController : Controller
         }
         
         recordsTotal = await todoItems.CountAsync();
-
+                
         var jsonData = new
         {
             draw = draw,
@@ -77,6 +67,15 @@ public class ToDoController : Controller
                 .Take(pageSize)
                 .ToListAsync()
         };
+
+        foreach (var row in jsonData.data)
+        {
+            UserProfile userProfile = await _userRepository.GetByEmailAsync(row.Assignee);
+
+            if (userProfile.Photo != null)
+                row.Photo = this.GetImage(Convert.ToBase64String(userProfile.Photo));            
+        }        
+
         _logger.LogInfo("DataTable is ready");
         return Ok(jsonData);
     }
@@ -90,7 +89,7 @@ public class ToDoController : Controller
         }
 
         return bytes;
-    }
+    }   
            
     [HttpGet]
     [Authorize] 

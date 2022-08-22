@@ -79,7 +79,7 @@ public class AuthController : Controller
     {
         if (id == 0)
         {
-            return View("Register");            
+            return View("Register", new RegisterRequest());            
         }
         else
         {

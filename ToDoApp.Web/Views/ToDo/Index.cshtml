@@ -28,7 +28,8 @@
             <th>Task</th>
             <th>End Date</th>
             <th>Status</th>
-            <th>Assignee</th>            
+            <th>Assignee</th>
+            <th>Photo</th>
             <th></th>
         </tr>
     </thead>    
@@ -60,7 +61,19 @@
                     { "data": "task", "name": "Task" },
                     { "data": "endDate", "name": "EndDate", "width":"150px" },
                     { "data": "status", "name": "Status", "width":"150px"  },
-                    { "data": "assignee", "name": "Assignee", "width":"200px"  },                    
+                    { "data": "assignee", "name": "Assignee", "width":"200px"  },
+                    { "data": "photo" ,
+                      "render": function ( data) {
+                          if (data) {
+                              return '<img src="data:image/jpg;base64,' + data + '" width="50px" height="50px">';
+                          } else {
+                              return null;
+                          }
+                      },
+                      "orderable": false,
+                      "searchable":false,
+                      "width":"150px"
+                    },
                     { "data": "id", "render" : function (data) {                             
                         return "<a class='btn btn-primary btn-sm' onclick=location.href='@(Url.Action("AddOrEdit", "ToDo"))/" +data+ "'><i class='fa fa-pencil'></i>Edit</a><a class='btn btn-danger btn-sm' style='margin-left:5px' onclick=Delete("+data+")><i class='fa fa-trash'></i> Delete</a>";
                     },

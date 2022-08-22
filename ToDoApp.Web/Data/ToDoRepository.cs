@@ -6,10 +6,12 @@ namespace ToDoApp.Web.Data;
 public class ToDoRepository : IToDoRepository
 {
     private readonly ToDoDbContext _context;
+    private readonly IUserRepository _userRepository;
 
-    public ToDoRepository(ToDoDbContext context)
+    public ToDoRepository(ToDoDbContext context, IUserRepository userRepository)
     {
         _context = context;
+        _userRepository = userRepository;
     }
     public async Task<ToDoItem> CreateAsync(ToDoItem toDoItem)
     {
@@ -40,7 +42,7 @@ public class ToDoRepository : IToDoRepository
     }
 
     public IQueryable<ToDoItem> SetQueryable()
-    {
+    {        
         return _context.Set<ToDoItem>().AsQueryable();
     }
 }
